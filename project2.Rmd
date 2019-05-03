@@ -1,0 +1,877 @@
+---
+title: "project2"
+author: "Andy Liu"
+date: "4/17/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+##1.b.image1
+
+43.78% pixels are in "1" (cloud) class; 38.46% pixels are in "0" (unlabeled) class; 17.77% are in "-1" (not cloud) class.
+
+I find that expert label "1" (Cloud) do not border "-1" (not cloud). I find that pixels with "-1" (not cloud) form in groups. Hence, an i.i.d assumption of the samples is not ideal, since the label of a particular pixcel is correlated to its neighboring pixels.
+
+```{r}
+library(MASS)
+library(ggplot2)
+image1 = read.table("/Users/liushaoyu/Documents/stat154/project2/image_data/image1.txt")
+colnames(image1)[1] <- "Y"
+colnames(image1)[2] <- "X"
+colnames(image1)[3] <- "label"
+colnames(image1)[4] <- "NDAI"
+colnames(image1)[5] <- "SD"
+colnames(image1)[6] <- "CORR"
+colnames(image1)[7] <- "DF"
+colnames(image1)[8] <- "CF"
+colnames(image1)[9] <- "BF"
+colnames(image1)[10] <- "AF"
+colnames(image1)[11] <- "AN"
+
+table(image1$label)/nrow(image1)
+
+ggplot(image1, aes(x=X, y=Y, color = label)) +
+  geom_point(size=2, shape=23) +
+  labs(title="maps with expert labels")
+
+
+
+```
+
+##1.c.image1
+Pairwise relationship between features:
+CORR vs. SD: From the scatterplot we find that there is a negative relationship between CORR and SD, and the variation in CORR increases as SD increases in observations.
+
+CORR vs. NDAI: From the scatterplot there is not an obvious linear relationship between CORR and NDAI. We find that as NDAI increases, the variation of CORR increases. 
+
+SD vs. NDAI: From the scatterplot we find there is a positive relationship between SD and NDAI. As NDAI increases, the variation of SD increases.
+
+
+The two classes (cloud vs. no cloud) have differences in radiance angle DF. From the boxplot, no cloud has higher radiance, less variance in radiance on average than places with cloud. Similar conditions hold for radiance angle BF, CF, AF and AN.
+
+I find that differences between class 1 (cloud) and -1 (no cloud) based on NDAI. Observations with no cloud has significantly lower level of NDAI (normalized difference angular index) than observations with cloud from the boxplot. Observations with no cloud has slightly lower and less variation in SD than observations with cloud. In terms of CORR, observations with no cloud on average are quite similar to observations with cloud, yet observations with cloud has higher variation in CORR than observations with no cloud.
+```{r}
+ggplot(image1, aes(x=NDAI, y=SD)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="NDAI vs.SD")
+
+ggplot(image1, aes(x=NDAI, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="NDAI vs.CORR")
+
+ggplot(image1, aes(x=SD, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="SD vs.CORR")
+
+ggplot(image1, aes(x=DF, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="DF vs.CORR")
+
+ggplot(image1, aes(x=CF, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="CF vs.CORR")
+
+
+boxplot(DF~label,data = image1, main = "expert label vs. Radiance angle DF")
+boxplot(BF~label,data = image1, main = "expert label vs. Radiance angle BF")
+boxplot(CF~label,data = image1, main = "expert label vs. Radiance angle CF")
+boxplot(AF~label,data = image1, main = "expert label vs. Radiance angle AF")
+boxplot(AN~label,data = image1, main = "expert label vs. Radiance angle AN")
+boxplot(SD~label,data = image1, main = "expert label vs. SD")
+boxplot(NDAI~label,data = image1, main = "expert label vs. NDAI")
+boxplot(CORR~label,data = image1, main = "expert label vs. CORR")
+
+```
+
+##1.b image2
+```{r}
+
+image2 = read.table("/Users/liushaoyu/Documents/stat154/project2/image_data/image2.txt")
+colnames(image2)[1] <- "Y"
+colnames(image2)[2] <- "X"
+colnames(image2)[3] <- "label"
+colnames(image2)[4] <- "NDAI"
+colnames(image2)[5] <- "SD"
+colnames(image2)[6] <- "CORR"
+colnames(image2)[7] <- "DF"
+colnames(image2)[8] <- "CF"
+colnames(image2)[9] <- "BF"
+colnames(image2)[10] <- "AF"
+colnames(image2)[11] <- "AN"
+
+table(image2$label)/nrow(image2)
+
+ggplot(image2, aes(x=X, y=Y, color = label)) +
+  geom_point(size=2, shape=23) +
+  labs(title="maps with expert labels")
+```
+
+
+##1.c.image2
+Pairwise relationship between features:
+CORR vs. SD: From the scatterplot we find that there is a negative relationship between CORR and SD, and the variation in CORR increases as SD increases in observations.
+
+CORR vs. NDAI
+There is some positive association between CORR and NDAI. From the scatterplot when roughly NDAI >1.5, the variation of CORR increases a lot.
+
+SD vs. NDAI
+From the scatterplot there is a positive association between SD and NDAI, yet the variation of SD increases with NDAI. 
+
+The two classes (cloud vs. no cloud) have differences in radiance angle DF. From the boxplot, no cloud has slightly lower radiance, less variance in radiance on average than places with cloud. For radiance angle BF, CF, AF and AN, no cloud has higher avarage radiance and lower variance than places with cloud.
+
+I find that differences between class 1 (cloud) and -1 (no cloud) based on NDAI. Observations with no cloud has significantly lower level of NDAI (normalized difference angular index) than observations with cloud from the boxplot. Observations with no cloud has slightly lower and less variation in SD than observations with cloud. In terms of CORR, observations with no cloud on has less average and lower variation than observations with cloud.
+```{r}
+ggplot(image2, aes(x=NDAI, y=SD)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="NDAI vs.SD")
+
+ggplot(image2, aes(x=NDAI, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="NDAI vs.CORR")
+
+ggplot(image1, aes(x=SD, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="SD vs.CORR")
+
+ggplot(image2, aes(x=DF, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="DF vs.CORR")
+
+ggplot(image2, aes(x=CF, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="CF vs.CORR")
+
+boxplot(DF~label,data = image2, main = "expert label vs. Radiance angle DF")
+boxplot(BF~label,data = image2, main = "expert label vs. Radiance angle BF")
+boxplot(CF~label,data = image2, main = "expert label vs. Radiance angle CF")
+boxplot(AF~label,data = image2, main = "expert label vs. Radiance angle AF")
+boxplot(AN~label,data = image2, main = "expert label vs. Radiance angle AN")
+boxplot(SD~label,data = image2, main = "expert label vs. SD")
+boxplot(NDAI~label,data = image2, main = "expert label vs. NDAI")
+boxplot(CORR~label,data = image2, main = "expert label vs. CORR")
+
+```
+
+
+##1.b image3
+```{r}
+
+image3 = read.table("/Users/liushaoyu/Documents/stat154/project2/image_data/image3.txt")
+colnames(image3)[1] <- "Y"
+colnames(image3)[2] <- "X"
+colnames(image3)[3] <- "label"
+colnames(image3)[4] <- "NDAI"
+colnames(image3)[5] <- "SD"
+colnames(image3)[6] <- "CORR"
+colnames(image3)[7] <- "DF"
+colnames(image3)[8] <- "CF"
+colnames(image3)[9] <- "BF"
+colnames(image3)[10] <- "AF"
+colnames(image3)[11] <- "AN"
+
+table(image3$label)/nrow(image2)
+
+ggplot(image3, aes(x=X, y=Y, color = label)) +
+  geom_point(size=2, shape=23) +
+  labs(title="maps with expert labels")
+```
+
+##1.c.image3
+Pairwise relationship between features:
+CORR vs. SD: From the scatterplot we cannot find a strong linear relationship between CORR and SD in this case. 
+
+CORR vs. NDAI: As NDAI increases, the average of CORR seems not changing much, but the variation of CORR increases quite a lot as NDAI increases. 
+
+SD vs. NDAI: From the scatterplot there is a positive association between SD and NDAI. When NDAI increases, SD also has larger variation.
+
+The two classes (cloud vs. no cloud) have differences in radiance angle DF. From the boxplot, no cloud has lower radiance on average, less variance in radiance on average than places with cloud. For radiance angle BF, CF, AF and AN, no cloud has higher radiance, lower varation than with cloud.
+
+I find that differences between class 1 (cloud) and -1 (no cloud) based on NDAI. Observations with no cloud has significantly lower level of NDAI (normalized difference angular index) than observations with cloud from the boxplot. Observations with no cloud has lower and less variation in SD than observations with cloud. In terms of CORR, observations with no cloud on average have lower CORR than observations with cloud, yet observations with cloud has higher variation in CORR than observations with no cloud.
+```{r}
+ggplot(image3, aes(x=NDAI, y=SD)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="NDAI vs.SD")
+
+ggplot(image3, aes(x=NDAI, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="NDAI vs.CORR")
+
+ggplot(image3, aes(x=SD, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="SD vs.CORR")
+
+ggplot(image3, aes(x=DF, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="DF vs.CORR")
+
+ggplot(image3, aes(x=CF, y=CORR)) +
+  geom_point(size=0.3, shape=23) +
+  labs(title="CF vs.CORR")
+
+boxplot(DF~label,data = image3, main = "expert label vs. Radiance angle DF")
+boxplot(BF~label,data = image3, main = "expert label vs. Radiance angle BF")
+boxplot(CF~label,data = image3, main = "expert label vs. Radiance angle CF")
+boxplot(AF~label,data = image3, main = "expert label vs. Radiance angle AF")
+boxplot(AN~label,data = image3, main = "expert label vs. Radiance angle AN")
+boxplot(SD~label,data = image3, main = "expert label vs. SD")
+boxplot(NDAI~label,data = image3, main = "expert label vs. NDAI")
+boxplot(CORR~label,data = image3, main = "expert label vs. CORR")
+
+```
+2 Preparation (40 pts)
+2.a.
+First, we split data in each image to 9 blocks based on x and y values. Then each image gives us 9 blocks. In total we have 27 blocks from all three images. We randomly select 9 blocks for training, 9 for validation and 9 for test. Because the data has spatial correlation, it is potentially problematic to split the data in fully randomized way. The way that I do can expectedly mitigate this problem because observations with similar values of x and y are spatially correlated, and they also tend to be grouped together in blocks. 
+
+```{r}
+library(rlist)
+library(dplyr)
+image1 = filter(image1,label!=0)
+image2 = filter(image2,label!=0) #remove unlabeled pixels
+image3 = filter(image3,label!=0)
+
+
+
+image1.folds.x = split(image1, cut(seq_along(image1$X),3, labels = FALSE))
+k1 = split(image1.folds.x[[1]],cut(seq_along(image1.folds.x[[1]]$Y),3,labels = FALSE))
+k2 = split(image1.folds.x[[2]],cut(seq_along(image1.folds.x[[2]]$Y),3,labels = FALSE))
+k3 = split(image1.folds.x[[3]],cut(seq_along(image1.folds.x[[3]]$Y),3,labels = FALSE))
+
+image2.folds.x = split(image2, cut(seq_along(image2$X),3, labels = FALSE))
+k4 = split(image2.folds.x[[1]],cut(seq_along(image2.folds.x[[1]]$Y),3,labels = FALSE))
+k5 = split(image2.folds.x[[2]],cut(seq_along(image2.folds.x[[2]]$Y),3,labels = FALSE))
+k6 = split(image2.folds.x[[3]],cut(seq_along(image2.folds.x[[3]]$Y),3,labels = FALSE))
+
+image3.folds.x = split(image2, cut(seq_along(image3$X),3, labels = FALSE))
+k7 = split(image3.folds.x[[1]],cut(seq_along(image3.folds.x[[1]]$Y),3,labels = FALSE))
+k8 = split(image3.folds.x[[2]],cut(seq_along(image3.folds.x[[2]]$Y),3,labels = FALSE))
+k9 = split(image3.folds.x[[3]],cut(seq_along(image3.folds.x[[3]]$Y),3,labels = FALSE))
+
+images.folds = c(k1,k2,k3,k4,k5,k6,k7,k8,k9)
+
+set.seed(123)
+a = sample(1:27)
+
+train = rbind(images.folds[a[1:9]])
+
+train[[1]]$image = 1
+train[[2]]$image = 3
+train[[3]]$image = 2
+train[[4]]$image = 3
+train[[5]]$image = 3
+train[[6]]$image = 1
+train[[7]]$image = 2
+train[[8]]$image = 2
+train[[9]]$image = 3
+
+train.block = rbind.data.frame(train[[1]],train[[2]],train[[3]],train[[4]],train[[5]],train[[6]],train[[7]],train[[8]],train[[9]])
+
+
+validation = rbind(images.folds[a[10:18]])
+validation[[1]]$image = 1
+validation[[2]]$image = 2
+validation[[3]]$image = 3
+validation[[4]]$image = 3
+validation[[5]]$image = 3
+validation[[6]]$image = 3
+validation[[7]]$image = 2
+validation[[8]]$image = 1
+validation[[9]]$image = 1
+
+validation.block = rbind.data.frame(validation[[1]],validation[[2]],validation[[3]],validation[[4]],validation[[5]],validation[[6]],validation[[7]],validation[[8]],validation[[9]])
+
+test = rbind(images.folds[a[19:27]])
+test.block = rbind.data.frame(test[[1]],test[[2]],test[[3]],test[[4]],test[[5]],test[[6]],test[[7]],test[[8]],test[[9]])
+
+```
+
+
+Second, we use random split method. We combine points in three images together and randomly select training, validation and test sets from it.
+```{r}
+
+set.seed(123)
+image.total = rbind.data.frame(rbind.data.frame(image1,image2),image3)
+image.total = image.total[1:208059,]
+
+folds = sample(rep(1:3, each = floor(208061/3)))            
+image.total$folds = folds
+
+train.random = image.total[image.total$folds == 1,] #training set
+validation.random = image.total[image.total$folds == 2,] #validation set
+merged.random = rbind.data.frame(train.random,validation.random)
+test.random = image.total[image.total$folds == 3,] #test set
+
+```
+
+
+
+2.b.
+From the trivial classifier, we find it has 0.6074687 accuracy on the validation set, and 0.6166996 on the test set; using the random split method, we find 0.6122158 accuracy on the validation set and 0.6102836 on the test set.
+When on average the pixels have high prevalence of no cloud (coded as -1), then this classifier will have high average accuracy.
+```{r}
+#validation set, blocking method
+trivial.val = rep(-1,nrow(validation.block))
+error.val = mean(validation.block$label != trivial.val)
+1-error.val
+#test set, blocking method
+trivial.test = rep(-1,nrow(test.block))
+error.test = mean(test.block$label != trivial.test)
+1-error.test
+
+#validation set, random method
+trivial.val2 = rep(-1,nrow(validation.random))
+error.val2 = mean(validation.random$label != trivial.val2)
+1-error.val2
+#test set, random method
+trivial.test2 = rep(-1,nrow(test.random))
+error.test2 = mean(test.random$label != trivial.test2)
+1-error.test2
+
+```
+
+2.c. We look at the merged training and validation dataset. First, we perform a principal component analysis. We find that the first three loadings are NDAI, SD and CORR, which explains the largest proportion of variation for our data. We then do boxplots of these features (CORR, NDAI and SD) with labeled status to see if there is significant differences of these features between labeled classes (-1 vs. 1). The boxplots reported confirm that there is clearly differences between the two classes in terms of CORR, NDAI and SD. Hence, these three featues not only explains large possible variations, they also have clear differences between the labeled classes.
+
+```{r}
+library(devtools)
+library(ggbiplot)
+
+merged.train.val = rbind.data.frame(train.block,validation.block)
+
+#PCA analysis for blocked method
+ 
+train.pca = prcomp(merged.train.val[,c(4:11)], center = TRUE,scale. = TRUE)
+summary(train.pca)
+#displace the first three loadings
+train.pca$rotation[1:3,]
+
+g = biplot(train.pca, scale = 0)
+g
+
+boxplot(CORR~label,data = merged.train.val, main = "labeled status vs. Correlation of MISR")
+boxplot(NDAI~label,data = merged.train.val, main = "labeled status vs. Normalized difference angular index (NDAI)")
+boxplot(SD~label,data = merged.train.val, main = "labeled status vs. Standard deviation (SDAn) of MISR nadir camera pixel values")
+
+merged.train.val = rbind.data.frame(train.block,validation.block)
+
+cor(merged.train.val$label,merged.train.val$NDAI)
+cor(merged.train.val$label,merged.train.val$CORR)
+cor(merged.train.val$label,merged.train.val$SD)
+
+cor(merged.train.val.random$label,merged.train.val.random$NDAI)
+cor(merged.train.val.random$label,merged.train.val.random$CORR)
+cor(merged.train.val.random$label,merged.train.val.random$SD)
+
+#PCA analysis for random method
+merged.train.val.random = rbind.data.frame(train.random,validation.random)
+
+train.pca2 = prcomp(merged.train.val.random[,c(4:11)], center = TRUE,scale. = TRUE)
+summary(train.pca2)
+#displace the first three loadings
+train.pca2$rotation[1:3,]
+
+g = biplot(train.pca2, scale = 0)
+g
+
+
+boxplot(CORR~label,data = merged.train.val.random, main = "labeled status vs. Correlation of MISR")
+boxplot(NDAI~label,data = merged.train.val.random, main = "labeled status vs. Normalized difference angular index (NDAI)")
+boxplot(SD~label,data = merged.train.val, main = "labeled status vs. SD")
+```
+
+##2d. see separate file
+
+## 3a (splitting data using the first method in 2(a))
+We merged the training and validation set to fit my CV model. We use 5 fold Cross validation for this question and we tried QDA, LDA, Logistic and KNN method (with k = 5). We find that KNN provides us the best accuracy both on the training set and on the test set.
+
+Knn assumptions: it does not make any assumptions of the underlying data distribution. It is a non-parametric "lazy" classification method.
+
+LDA assumptions: The LDA classifier assumes that each class comes from a normal distribution with a class-specific mean vector and a common variance. 
+
+QDA assumptions: it holds the same assumptions as LDA except that the covariance matrix that is not common to all K classes.
+
+Logistic regression assumptions: little or no multicollinearity among independent variables; observations are independent. Perfect multicollinearity makes estimation impossible, while strong multicollinearity makes estimates imprecise. This assumption probably is satisfied because CORR, SD and NDAI do not have strong multicollinearity and they measure different aspects. Another assumption of independent observations is likely to be violated, because spatial correlation makes nearby observations to be strongly correlated with each other.
+
+
+Based on results using QDA, LDA, logistic and KNN, I find that KNN method provides the best accuracy. The error rate in each fold for all these methods are rather stable. KNN method has the highest average accuracy across folds, and also the highest for the test accuracy.
+
+
+```{r}
+library(caret)
+library(class)
+#merged training and validation set 
+# Define train control for 5 fold cross validation
+train.new = rbind.data.frame(train.block,validation.block)
+```
+
+```{R}
+library(caret)
+#knn
+folds <- createFolds(train.new$label, k = 5)
+cv.error <- rep(0, 5)
+for (i in 1:5){
+  train.data = train.new[-folds[[i]],] 
+  val.data = train.new[folds[[i]],] 
+  val.y = val.data$label
+  fit.model1 = knn(train.data[,c(4:6)],val.data[,c(4:6)],cl = train.data[,3], k=5, prob = TRUE)
+  #y.hat = predict(fit.model, new = val.data)
+  cv.error[i] = mean(fit.model1!= val.y)
+}
+  cv.error
+#calculate the average of cv accuracy: 0.9458009
+1-mean(cv.error)
+
+#calculate test accuracy: 0.9537257
+pred.test.knn <- knn(train=train.new[,c(4:6)], test=test.block[,c(4:6)], cl=train.new$label, k=5, prob = T)
+1 - mean(test.block$label != pred.test.knn)
+
+
+#qda
+folds <- createFolds(train.new$label, k = 5)
+cv.error <- rep(0, 5)
+for (i in 1:5){
+  train.data = train.new[-folds[[i]],] 
+  val.data = train.new[folds[[i]],] 
+  val.y = val.data$label
+  fit.model2 <- qda(formula = label ~ NDAI + SD + CORR, data = train.new)
+  y.hat = predict(fit.model2, new = val.data)
+  cv.error[i] = mean(y.hat$class!= val.y)
+}
+cv.error
+#calculate the average of cv accuracy:0.931651
+1-mean(cv.error)
+
+train.accuracy.qda = predict(fit.model2, new = train.new)
+train.error.qda = mean(train.accuracy.qda$class!= train.new$label)
+1 - train.error.qda 
+
+#calculate test accuracy on the test set 0.9271564
+test.accuracy.qda = predict(fit.model2, new = test.block)
+test.error.qda = mean(test.accuracy.qda$class!= test.block$label)
+1 - test.error.qda #0.9271564
+
+
+#lda
+folds <- createFolds(train.new$label, k = 5)
+cv.error <- rep(0, 5)
+for (i in 1:5){
+  train.data = train.new[-folds[[i]],] 
+  val.data = train.new[folds[[i]],] 
+  val.y = val.data$label
+  fit.model3 <- lda(formula = label ~ NDAI + SD + CORR,data = train.new)
+  y.hat = predict(fit.model3, new = val.data)
+  cv.error[i] = mean(y.hat$class!= val.y)
+}
+cv.error
+#calculate the average of cv accuracy: 0.9287152
+1 - mean(cv.error)
+
+train.accuracy.lda = predict(fit.model3, new = train.new)
+train.error.lda = mean(train.accuracy.lda$class!= train.new$label)
+1 - train.error.lda
+
+test.accuracy.lda = predict(fit.model3, new = test.block)
+test.error.lda = mean(test.accuracy.lda$class!= test.block$label)
+1 - test.error.lda #0.9260432
+
+#logistic regression change value to 0
+train.new2 <- train.new %>% mutate(label = replace(label, label == -1, 0))
+test.block2 <- test.block %>% mutate(label = replace(label, label == -1, 0))
+folds <- createFolds(train.new$label, k = 5)
+cv.error <- rep(0, 5)
+for (i in 1:5){
+  train.data = train.new2[-folds[[i]],] 
+  val.data = train.new2[folds[[i]],] 
+  val.y = val.data$label
+  fit.model4 <- train(as.factor(label) ~ NDAI + SD + CORR,method = "glm",family = binomial, data = train.new2)
+  y.hat = predict(fit.model4, new = val.data)
+  cv.error[i] = mean(y.hat!= val.y)
+}
+
+cv.error
+
+#calculate the average of cv error: 0.923539
+1 - mean(cv.error)
+
+train.accuracy.logit = predict(fit.model4, type = "prob",new = train.new2)
+train.accuracy.logit2 = predict(fit.model4, new = train.new2)
+test.accuracy.logit2 = predict(fit.model4, new = test.block2)
+
+#test accuracy 0.9186091
+test.accuracy.logit = predict(fit.model4, new = test.block2)
+test.error.logit = mean(test.accuracy.logit != test.block2$label)
+1 - test.error.logit #0.9186091
+```
+
+
+## (b) Use ROC curves to compare the different methods. 
+```{R}
+library(ROCR)
+df.lda = data.frame(train.accuracy.lda)
+df.qda = data.frame(train.accuracy.qda)
+df.logit = data.frame(train.accuracy.logit)
+
+haha = attr(pred.test.knn,"prob")
+haha1 = 2*ifelse(pred.test.knn == "-1",1-haha,haha)-1
+pred <- prediction(haha1, test.random$label)
+perf.knn <- performance(pred,"tpr","fpr")
+
+
+
+pred.lda = prediction(train.accuracy.lda$posterior[,2],merged.random$label)
+perf.lda = performance(pred.lda,"tpr","fpr")
+
+pred.qda = prediction(train.accuracy.qda$posterior[,2],merged.random$label)
+perf.qda = performance(pred.qda,"tpr","fpr")
+
+pred.logit = prediction(train.accuracy.logit$`1`,merged.random$label)
+perf.logit = performance(pred.logit,"tpr","fpr")
+
+rocr_sensspec <- function(x, class) {
+    pred <- ROCR::prediction(x, class)
+    perf <- ROCR::performance(pred, "sens", "spec")
+    sens <- slot(perf, "y.values")[[1]]
+    spec <- slot(perf, "x.values")[[1]]
+    cut <- slot(perf, "alpha.values")[[1]]
+    cut[which.max(sens + spec)]
+}
+
+
+#find cutoff on the ROC curves
+rocr_sensspec(train.accuracy.lda$posterior[,2],merged.random$label)
+rocr_sensspec(train.accuracy.qda$posterior[,2],merged.random$label)
+rocr_sensspec(train.accuracy.logit$`1`,merged.random$label)
+rocr_sensspec(haha1,test.random$label) #knn
+
+
+cutoffs <- data.frame(cut=perf.knn@alpha.values[[1]], fpr=perf.knn@x.values[[1]], 
+                      tpr=perf.knn@y.values[[1]])
+
+plot(perf.knn,print.cutoffs.at = -0.3333333) + title("ROC curve: KNN") 
+abline(v = 0.06035, col = "red")
+
+
+plot(perf.lda,print.cutoffs.at = 0.2558506,lwd = 2, col = "red") + title("ROC curve: LDA")
+plot(perf.qda,print.cutoffs.at = 0.1521293,lwd = 2, col = "blue") + title("ROC curve: QDA")
+plot(perf.logit,print.cutoffs.at = 0.3084961,lwd = 2, col = "green") + title("ROC curve: Logit")
+
+```
+The receiver operating characteristic curve (ROC) is a commonly used summary for assessing the tradeoff between sensitivity and specificity. The horizontal distance from the curve to the right measures specificity (1− false positive rate); and the vertical distance from the curve to the x axis measures sensitivity (1-false negative rate). To deal with the trade-off between these two, we apply a function in the code to compute the cutoff point that maximizes the sum of sensitivity and specificity. This could be good in this case because we take the importance of both traits to acccount. The plots show the optimal cutoff points in each graph for KNN, QDA, LDA, and Logit
+
+## (c) (Bonus) Assess the fit using other relevant metrics.
+
+We use three alternative methods 1) Confusion matrix 2) Cohen's Kappa 3) area below ROC curve. The confusion matrix method, which effectively shows true positives, true negatives, false negatives, and false positives. The confusionMatrix in caret package also outputs Cohen's Kappa (Observed Accuracy - Expected Accuracy) / (1 - Expected Accuracy), an alternative measurement of accuracy which takes into account the accuracy that would have happened anyway through random predictions. We see the Kappa for KNN is 0.875, QDA model is 0.8855; LDA is 0.8703 and logit is 0.8583. QDA has a slightly better Kappa than KNN, but KNN is quite good compared to LDA and Logit.
+
+The area under the ROC curve can be used as an evaluation metric to compare the efficacy of the models, hence I calculate area under the ROC curve for each model. The area under KNN model is 0.9742579, logit model 0.9590257, LDA model 0.9547143, and QDA 0.9625022. KNN model is has the highest value in this metric.
+
+```{r}
+
+confusionMatrix(test.accuracy.qda$class,factor(test.block$label))
+confusionMatrix(test.accuracy.lda$class,factor(test.block$label))
+confusionMatrix(test.accuracy.logit2,factor(test.block2$label)) #to fit into the default set up of logit model, note the 0 but not -1 here refers to no cloud, 1 refers to with cloud.
+confusionMatrix(pred.test.knn,factor(test.block$label))
+
+perf.auc.knn = performance(pred,"auc")
+perf.auc.logit = performance(pred.logit,"auc")
+
+perf.auc.lda = performance(pred.lda,"auc")
+
+perf.auc.qda = performance(pred.qda,"auc")
+
+perf.auc.knn@y.values
+perf.auc.logit@y.values #area below the ROC curve
+perf.auc.lda@y.values
+perf.auc.qda@y.values
+
+```
+
+
+# 4 Diagnostics (50 pts)
+
+##4a.
+From previous parts we know that KNN provides arguably the best method that we use for classification. Hence, we plot the accuracy with different k values. 
+```{R}
+## use the blocking method
+
+accuracy.knn1 <- rep(0,20)
+for(i in 1:20){
+  class.knn1 <- knn(train.new[,4:6],
+               test.block[,4:6],cl=train.new[,3],k=i)
+  accuracy.knn1[i] <-  mean(class.knn1 == test.block$label)
+}
+accuracy.knn1
+plot(accuracy.knn1,xlab="k value",ylab="accuracy", type = "o")
+
+accuracy.knn1 <- rep(0,20)
+for(i in 1:20){
+  class.knn1 <- knn(train.new[,4:6],
+               test.block[,4:6],cl=train.new[,3],k=i)
+  accuracy.knn1[i] <-  mean(class.knn1 == test.block$label)
+}
+accuracy.knn1
+plot(accuracy.knn1,xlab="k value",ylab="accuracy", type = "o")
+
+
+
+##Confusion matrix
+confusionMatrix(class.knn1,factor(test.block$label))
+
+
+#use self-selected number of trees instead of the default one.
+model.rf <- randomForest(factor(label)~NDAI + SD + CORR, data = train.new, importance = TRUE)
+model.rf #output the error rate
+model.rf$confusion #output the confusion matrix on training dataset
+
+model.rf50 <- randomForest(factor(label)~NDAI + SD + CORR, data = train.new, importance = TRUE, ntree = 50)
+model.rf50 #output the error rate
+model.rf50$confusion #output the confusion matrix on training dataset
+
+predTest50 <- predict(model.rf50, test.block, type = "class")
+mean(predTest50 == test.block$label) #check classifcation accuracy
+
+model.rf100 <- randomForest(factor(label)~NDAI + SD + CORR, data = train.new, importance = TRUE, ntree = 100)
+model.rf100 #output the error rate
+model.rf100$confusion #output the confusion matrix on training dataset
+
+predTest100 <- predict(model.rf100, test.block, type = "class")
+mean(predTest100 == test.block$label) #check classifcation accuracy
+
+model.rf300 <- randomForest(factor(label)~NDAI + SD + CORR, data = train.new, importance = TRUE, ntree = 300)
+model.rf300 #output the error rate
+model.rf300$confusion #output the confusion matrix on training dataset
+
+predTest300 <- predict(model.rf300, test.block, type = "class")
+mean(predTest300 == test.block$label) #check classifcation accuracy
+
+model.rf700 <- randomForest(factor(label)~NDAI + SD + CORR, data = train.new, importance = TRUE, ntree = 700)
+model.rf700 #output the error rate
+model.rf700$confusion #output the confusion matrix on training dataset
+
+predTest700 <- predict(model.rf700, test.block, type = "class")
+mean(predTest700 == test.block$label) #check classifcation accuracy
+
+predTest <- predict(model.rf, test.block, type = "class")
+mean(predTest == test.block$label) #check classifcation accuracy
+
+model.rf900 <- randomForest(factor(label)~NDAI + SD + CORR, data = train.new, importance = TRUE, ntree = 900)
+model.rf900 #output the error rate
+model.rf900$confusion #output the confusion matrix on training dataset
+
+predTest900 <- predict(model.rf900, test.block, type = "class")
+mean(predTest900 == test.block$label) #check classifcation accuracy
+
+n.tree = c(50,100,300,500,700,900)
+n.accuracy = c(0.9590235,mean(predTest100 == test.block$label),mean(predTest300 == test.block$label),mean(predTest == test.block$label),mean(predTest700 == test.block$label),0.9595765)
+
+plot(x = n.tree, y = n.accuracy,type = "o",xlab="number of trees",ylab="accuracy")
+
+confusionMatrix(predTest100,test.block$label)
+confusionMatrix(predTest300,test.block$label)
+confusionMatrix(predTest,test.block$label)
+confusionMatrix(predTest700,test.block$label)
+
+
+## use the random method
+accuracy.knn2 <- rep(0,20)
+for(i in 1:20){
+  class.knn2 <- knn(merged.random[,4:6],
+               test.random[,4:6],cl=merged.random[,3],k=i)
+  accuracy.knn2[i] <-  mean(class.knn2 == test.randomk$label)
+}
+accuracy.knn2
+plot(accuracy.knn2,xlab="k value",ylab="accuracy")
+
+##Confusion matrix
+confusionMatrix(class.knn2,factor(train.new$label))
+confusionMatrix(test.accuracy.knn$class,factor(train.new$label))
+```
+
+##4c.
+There are at least two ways to make it better:
+
+1. use another classification method. We try using random forest method, using the same first sampling method in 2(a). The random forest method gives us higher accuracy on training set and test set for both methods of spliting. 
+```{r}
+library(randomForest)
+
+model.rf <- randomForest(factor(label)~NDAI + SD + CORR, data = train.new, importance = TRUE)
+model.rf #output the error rate
+model.rf$confusion #output the confusion matrix on training dataset
+
+predTest <- predict(model.rf, test.block, type = "class")
+mean(predTest == test.block$label) #check classifcation accuracy
+
+confusionMatrix(predTest,factor(test.block$label))
+
+model.rf2 <- randomForest(factor(label)~NDAI + SD + CORR, data = merged.random, importance = TRUE)
+model.rf2 #output the error rate
+model.rf2$confusion #output the confusion matrix on training dataset
+
+predTest2 <- predict(model.rf2, test.random, type = "class")
+mean(predTest2 == test.random$label) #check classifcation accuracy
+
+```
+2. Use better features. The features that the authors use in the article includes CORR (average linear correlation of radiation measurements at different view angles, defined at a 2.2-km spatial resolution, but with a spacing of 1.1 km, using the 275-m data).NDAI uses the average radiation measurements, which are over a 4 × 4 group of 275-m resolution red radiation measurements. These measurements may not be the best in all cases. The change of spatial resolution and spacing may affect the effectiveness of these constructed features. For example, change the spacing 1.1km of CORR to 0.8km. This could provide a more detailed correlation measurement, which is more effective especially on the boundary points.
+
+##4b.
+We focus on the misclassified labels to see if they have some systematic patterns. The previous best method we find is KNN, but we find in 4c that Random forest gives an even better result. From the confusion matrix on the training set, we find it has higher rate to classify actual -1 (no could) as 1 (cloud) than classifying 1(cloud) to -1 (no cloud). Then we take a look at where does these errored labels concentrate spatially. We map the misclassified points to the image maps we created in question 1. From the three plots we find misclassified points usually locate on the edge of cloud or no cloud regions. The classification errors especially locate in regions where cloud and noncloud regions locate very close to each other.
+
+Training set has NDAI in the range:-1.6811455,4.3460255; misclassified labels have NDAI in this specific range:-0.52865756, 4.1982489. Misclassified labels have SD in this specific range:0.7903856, 88.28141; Training set has SD in the range:0.2506054, 110.46764. Misclassified labels have CORR in this specific range:-0.32712963, 0.7207008; Training set has CORR in the range:-0.32712963, 0.8143999.
+
+```{r}
+train.new.rf = train.new
+train.new.rf$predicted.rf = model.rf$predicted
+
+miscl.rf = filter(train.new.rf,predicted.rf != label)
+paste0("Misclassified labels have NDAI in this specific range:",range(miscl.rf$NDAI)[[1]],sep = ", ", range(miscl.rf$NDAI)[[2]])
+
+paste0("Training set has NDAI in the range:",range(train.new$NDAI)[[1]],sep = ",", range(train.new$NDAI)[[2]])
+
+paste0("Misclassified labels have SD in this specific range:",range(miscl.rf$SD)[[1]],sep = ", ", range(miscl.rf$SD)[[2]])
+
+paste0("Training set has SD in the range:",range(train.new$SD)[[1]],sep = ", ", range(train.new$SD)[[2]])
+
+
+paste0("Misclassified labels have CORR in this specific range:",range(miscl.rf$CORR)[[1]],sep = ", ", range(miscl.rf$CORR)[[2]])
+
+paste0("Training set has CORR in the range:",range(train.new$CORR)[[1]],sep = ", ", range(train.new$CORR)[[2]])
+
+miscl.one = filter(miscl.rf,image == 1)
+miscl.two = filter(miscl.rf,image == 2)
+miscl.three = filter(miscl.rf,image == 3)
+
+ggplot(image1, aes(x=X, y=Y, color = label)) +
+  geom_point(size=2, shape=23) +
+  labs(title="Image1 with expert labels, with red dots as misclassified labels") +
+  geom_point(data = miscl.one, mapping = aes(x = X, y = Y), color = "red")
+
+ggplot(image2, aes(x=X, y=Y, color = label)) +
+  geom_point(size=2, shape=23) +
+  labs(title="Image2 with expert labels, with red dots as misclassified labels") +
+  geom_point(data = miscl.two, mapping = aes(x = X, y = Y), color = "red")
+
+ggplot(image3, aes(x=X, y=Y, color = label)) +
+  geom_point(size=2, shape=23) +
+  labs(title="Image3 with expert labels, with red dots as misclassified labels") +
+  geom_point(data = miscl.three, mapping = aes(x = X, y = Y), color = "red")
+
+```
+
+
+
+
+##4d. 
+To test the fit of our model, we use the alternative way (randomized) splitting. We find that random forest still gives us the highest test accuracy (91.7%), while KNN gives about 90.9% accuracy, followed by other methods.
+```{r}
+
+library(caret)
+#knn
+folds <- createFolds(merged.random$label, k = 5)
+cv.error <- rep(0, 5)
+for (i in 1:5){
+  train.data = merged.random[-folds[[i]],] 
+  val.data = merged.random[folds[[i]],] 
+  val.y = val.data$label
+  fit.model1 = knn(train.data[,c(4:6)],val.data[,c(4:6)],cl = train.data$label, k=5, prob = TRUE)
+  #y.hat = predict(fit.model, new = val.data)
+  cv.error[i] = mean(fit.model1!= val.y)
+}
+  1 - cv.error
+#calculate the average of cv accuracy: 0.9092397
+1-mean(cv.error)
+
+
+#calculate test accuracy:0.9083818
+pred.test.knn <- knn(train=merged.random[,c(4:6)], test=test.random[,c(4:6)], cl=merged.random$label, k=5, prob = T)
+1 - mean(test.random$label != pred.test.knn)
+
+
+#qda
+folds <- createFolds(merged.random$label, k = 5)
+cv.error <- rep(0, 5)
+for (i in 1:5){
+  train.data = merged.random[-folds[[i]],] 
+  val.data = merged.random[folds[[i]],] 
+  val.y = val.data$label
+  fit.model2 <- qda(formula = label ~ NDAI + SD + CORR, data = merged.random)
+  y.hat = predict(fit.model2, new = val.data)
+  cv.error[i] = mean(y.hat$class!= val.y)
+}
+1 - cv.error
+#calculate the average of cv accuracy:0.8970052
+1-mean(cv.error)
+
+train.accuracy.qda = predict(fit.model2, new = merged.random)
+train.error.qda = mean(train.accuracy.qda$class!= merged.random$label)
+1 - train.error.qda 
+
+#calculate test accuracy on the test set 0.8960968
+test.accuracy.qda = predict(fit.model2, new = test.random)
+test.error.qda = mean(test.accuracy.qda$class!= test.random$label)
+1 - test.error.qda #0.8960968
+
+
+#lda
+folds <- createFolds(merged.random$label, k = 5)
+cv.error <- rep(0, 5)
+for (i in 1:5){
+  train.data = merged.random[-folds[[i]],] 
+  val.data = merged.random[folds[[i]],] 
+  val.y = val.data$label
+  fit.model3 <- lda(formula = label ~ NDAI + SD + CORR,data = merged.random)
+  y.hat = predict(fit.model3, new = val.data)
+  cv.error[i] = mean(y.hat$class!= val.y)
+}
+1 - cv.error
+#calculate the average of cv accuracy:0.8978559
+1 - mean(cv.error)
+
+train.accuracy.lda = predict(fit.model3, new = merged.random)
+train.error.lda = mean(train.accuracy.lda$class!= merged.random$label)
+1 - train.error.lda
+
+test.accuracy.lda = predict(fit.model3, new = test.random)
+test.error.lda = mean(test.accuracy.lda$class!= test.random$label)
+1 - test.error.lda #0.8961545
+
+#logistic regression change value to 0
+train.random2 <- merged.random %>% mutate(label = replace(label, label == -1, 0))
+test.random2 <- test.random %>% mutate(label = replace(label, label == -1, 0))
+folds <- createFolds(train.random2$label, k = 5)
+cv.error <- rep(0, 5)
+for (i in 1:5){
+  train.data = train.random2[-folds[[i]],] 
+  val.data = train.random2[folds[[i]],] 
+  val.y = val.data$label
+  fit.model4 <- train(as.factor(label) ~ NDAI + SD + CORR,method = "glm",family = binomial, data = train.random2)
+  y.hat = predict(fit.model4, new = val.data)
+  cv.error[i] = mean(y.hat!= val.y)
+}
+
+1 - cv.error
+
+#calculate the average of cv error: 0.8929967
+1 - mean(cv.error)
+
+train.accuracy.logit = predict(fit.model4, type = "prob",new = train.random2)
+train.accuracy.logit2 = predict(fit.model4, new = train.random2)
+
+
+#test accuracy 0.8912953
+test.accuracy.logit = predict(fit.model4, new = test.random2)
+test.error.logit = mean(test.accuracy.logit != test.random2$label)
+1 - test.error.logit #0.8912953
+
+#random forest
+
+model.rf <- randomForest(factor(label)~NDAI + SD + CORR, data = merged.random, importance = TRUE)
+model.rf #output the error rate
+model.rf$confusion #output the confusion matrix on training dataset
+
+predTest <- predict(model.rf, test.random, type = "class")
+mean(predTest == test.random$label) #check classifcation accuracy 0.9170187
+```
+
+
+##4e Conclusion
+Based on previous results, using either randomized splitting or blocked splitting, we find that random forest provides us the best model to classify cloud in this case. For other methods, KNN is slightly better than others, probably because it is a non-parametric method that does not make assumptions about data distribution and thus more suitable in cases with spatial correlation. However, all these methods have limitations and mistakes especially close to the boundaries of our data, where no cloud and cloud locate close spatially. Potential improvements of our prediction also includes improvement of features, which require more domain knowledge and better, more detailed measurements.
+
